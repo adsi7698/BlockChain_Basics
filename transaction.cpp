@@ -7,6 +7,7 @@ using namespace std;
 class person {
     private:
         string name;
+        int balance;
     public:
         person() {}
 
@@ -20,7 +21,7 @@ void person::getName(string name2) {
 
 class bitcoin {
     private:
-        int balance;
+        int transaction;
         bitcoin* prev;
         bitcoin* cur;
     public:
@@ -34,10 +35,10 @@ int main() {
     cout<<"Hello !"<<endl;
     cout<<"What would you like to do in this blockchain world ?"<<endl;
     cout<<"1. Create Account"<<endl<<"2. Withdraw Money"<<endl<<"3. Deposit Money"<<endl<<"4. Delete Account"<<endl;
-    cout<<"5. Convert from bitcoin to inr"<<endl<<endl;
+    cout<<"5. Convert from bitcoin to inr"<<endl<<"6. Current Balanace "<<endl;
     cout<<"Warning :: only 10 accounts can be created at once !!"<<endl;
-
-    int choice, i = 0;
+    cout<<endl;
+    int choice, i = 0, amount;
     person a[10];
     string name;
     while(1) {
@@ -50,9 +51,18 @@ int main() {
                     a[i].getName(name);
                     i++;
                     break;
-            case 2: cout<<"";
+            case 2: cout<<"Enter Amount to withdraw !"<<endl;
+                    cin>>amount;
+
             default: return 0;
         }
+
+        cout<<endl<<endl;
+        cout<<"What would you like to do in this blockchain world ?"<<endl;
+        cout<<"1. Create Account"<<endl<<"2. Withdraw Money"<<endl<<"3. Deposit Money"<<endl<<"4. Delete Account"<<endl;
+        cout<<"5. Convert from bitcoin to inr"<<endl<<"6. Current Balance "<<endl;
+        cout<<"Warning :: only 10 accounts can be created at once !!"<<endl;
+        cout<<endl;
     }
     return 0;
 }
