@@ -9,10 +9,13 @@ class person {
         string name;
         int balance;
     public:
-        person() {}
+        person() { balance = 0; }
         void getName(string name2);
         string myName();
         int getBalance();
+        void withdraw(int amount);
+        void deposit(int amount);
+        void convert(int amount);
 };
 
 void person::getName(string name2) {
@@ -28,50 +31,60 @@ int person::getBalance() {
     return balance;
 }
 
-static counting = 0;
-
-class bitcoin {
-    private:
-        string a;
-        string b;
-        int transaction;
-        bitcoin* prev;
-        bitcoin* cur;
-    public:
-        bitcoin();
-        void withdraw(person p1, int amount);
-        void deposit(person p1);
-        void convert(person p1);
+static int counting = 0;
+struct bitcoin {
+    int transaction;
+    bitcoin* prev;
+    bitcoin* cur;
+    string t1;
+    string t2;
 };
 
-void bitcoin::bitcoin() {
+struct bitcoin* last = NULL;
 
-    if(counting == 0) {
-        prev = NULL;
-        // cur points to its own location ...
-    }
-
+bitcoin* createNode() {
+    bitcoin* temp = (bitcoin*)malloc(sizeof(struct bitcoin));
+    return temp;
 }
 
-void bitcoin::withdraw(person p1, int amount) {
-
-    if(p1.getBalance() == 0) {
-        cout<<"No balance"<<endl;
-        return ;
+void insertLast(bitcoin* last, int amount, int type, string name) {
+    bitcoin* temp = createNode();
+    temp->transaction = amount;
+    if(type == 0) {
+        temp->t1 = "bank";
+        temp->t2 = name;
     }
-    else if(p1.getBalance() >= amount) {
+    temp->prev = last;
+    temp->cur = temp;
+    last = temp;
+}
+
+void person::withdraw(int amount) {
+    if(balance == 0) {
+        cout<<"No balance !"<<endl;
+    }
+    else if(amount <= balance) {
+        cout<<"Would you like to see your balance ?"<<endl;
+        cout<<"Y/N ?"<<endl;
         char choice;
-        cout<<"Do you want to know the current balance ?"<<endl;
+        cin>>choice;
+        if(choice == 'Y') {
+            cout<<"Mr."<<name<<" your balance is $$ "<<balance<<endl;
+        }
+        balance -= amount;
+        cout<<"Would you like to see your current balance ?"<<endl;
         cout<<"Y/N ?"<<endl;
         cin>>choice;
         if(choice == 'Y') {
-            cout<<"Your balance is "<<p1.getBalance()<<"Mr. "<<p1.myName()<<endl;
+            cout<<"Mr."<<name<<" your balance is $$ "<<balance<<endl;
         }
     }
     else {
-        cout<<"Not enough balance !"<<endl;
-        cout<<"Transaction failed !"<<endl;
+        cout<<"Balance is not enough to make transaction !"<<endl;
     }
+    int type = 0;
+    //type 0 for withdraw
+    insertLast(last, amount, type, name);
 }
 
 int main() {
@@ -97,8 +110,7 @@ int main() {
                     break;
             case 2: cout<<"Enter Amount to withdraw !"<<endl;
                     cin>>amount;
-                    bitcoin b1;
-                    b1.withdraw(a[i], amount);
+                    a[i].withdraw(amount);
                     break;
             default: return 0;
         }
