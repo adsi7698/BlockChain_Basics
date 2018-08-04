@@ -4,6 +4,14 @@
 
 using namespace std;
 
+struct bitcoin {
+    int transaction;
+    bitcoin* prev;
+    bitcoin* cur;
+    string t1;
+    string t2;
+};
+
 class person {
     private:
         string name;
@@ -13,9 +21,9 @@ class person {
         void getName(string name2);
         string myName();
         int getBalance();
-        void withdraw(int amount);
-        void deposit(int amount);
-        void convert(int amount);
+        bitcoin* withdraw(bitcoin* last, int amount);
+        bitcoin* deposit(bitcoin* last, int amount);
+        bitcoin* convert(bitcoin* last, int amount);
 };
 
 void person::getName(string name2) {
@@ -31,23 +39,16 @@ int person::getBalance() {
     return balance;
 }
 
-struct bitcoin {
-    int transaction;
-    bitcoin* prev;
-    bitcoin* cur;
-    string t1;
-    string t2;
-};
-
-struct bitcoin* last = NULL;
 bitcoin* createNode() {
     bitcoin* temp = (bitcoin*)malloc(sizeof(struct bitcoin));
     return temp;
 }
 
-void insertLast(bitcoin* last, int amount, int type, string name) {
+bitcoin* insertLast(bitcoin* last, int amount, int type, string name) {
     bitcoin* temp = createNode();
+
     temp->transaction = amount;
+
     // type 0 is for withdrawing money whereas type 1 is for depositing money !
     if(type == 0) {
         temp->t1 = "Bank";
@@ -60,14 +61,17 @@ void insertLast(bitcoin* last, int amount, int type, string name) {
     temp->prev = last;
     temp->cur = temp;
     last = temp;
+    cout<<temp<<endl;
+    return last;
 }
 
-void traverse(bitcoin* tail) {
-    if(tail != NULL) {
-        traverse(tail->prev);
-    }
-    else
+void traverse(bitcoin * tail) {
+
+    if(tail == NULL) {
         return ;
+    }
+    traverse(tail->prev);
+
     cout<<"All transactions recorded are :"<<endl;
     if(tail->t1 == "Bank") {
         cout<<tail->t2<<" withdraw $$ "<<tail->transaction<<" from "<<tail->t1<<endl;
@@ -77,37 +81,37 @@ void traverse(bitcoin* tail) {
     }
 }
 
-void person::withdraw(int amount) {
+bitcoin* person::withdraw(bitcoin* last, int amount) {
     if(balance == 0) {
         cout<<"No balance !"<<endl;
-        return ;
+        return last;
     }
     else if(amount <= balance) {
         cout<<"Would you like to see your balance ?"<<endl;
         cout<<"Y/N ?"<<endl;
         char choice;
         cin>>choice;
-        if(choice == 'Y') {
+        if(choice == 'Y' || choice == 'y') {
             cout<<"Mr."<<name<<" your balance is $$ "<<balance<<endl;
         }
         balance -= amount;
         cout<<"Would you like to see your current balance ?"<<endl;
         cout<<"Y/N ?"<<endl;
         cin>>choice;
-        if(choice == 'Y') {
+        if(choice == 'Y' || choice == 'y') {
             cout<<"Mr."<<name<<" your balance is $$ "<<balance<<endl;
         }
     }
     else {
         cout<<"Balance is not enough to make transaction !"<<endl;
-        return ;
+        return last;
     }
-    int type = 0;
     //type 0 for withdraw
-    insertLast(last, amount, type, name);
+    last = insertLast(last, amount, 0, name);
+    return last;
 }
 
-void person::deposit(int amount) {
+bitcoin* person::deposit(bitcoin* last, int amount) {
 
     cout<<"Would you like to see your balance ?"<<endl;
     cout<<"Y/N ?"<<endl;
@@ -124,24 +128,27 @@ void person::deposit(int amount) {
         cout<<"Mr."<<name<<" your balance is $$ "<<balance<<endl;
     }
 
-    int type = 1;
     //type 0 for withdraw
-    insertLast(last, amount, type, name);
+    last = insertLast(last, amount, 1, name);
+
+    return last;
 }
 
 int main() {
 
+    struct bitcoin* last = NULL;
+
     cout<<"Hello !"<<endl;
-    cout<<"What would you like to do in this blockchain world ?"<<endl;
-    cout<<"1. Create Account"<<endl<<"2. Withdraw Money"<<endl<<"3. Deposit Money"<<endl<<"4. Delete Account"<<endl;
-    cout<<"5. Convert from bitcoin to inr"<<endl<<"6. Current Balanace "<<endl<<"7. Know all Transactions"<<endl;
-    cout<<"8. Exit from the bitcoin world !"<<endl;
-    cout<<"Warning :: only 10 accounts can be created at once !!"<<endl;
-    cout<<endl;
     int choice, i = 0, amount;
     person a[10];
     string name;
     while(1) {
+        cout<<"What would you like to do in this blockchain world ?"<<endl;
+        cout<<"1. Create Account"<<endl<<"2. Withdraw Money"<<endl<<"3. Deposit Money"<<endl<<"4. Delete Account"<<endl;
+        cout<<"5. Convert from bitcoin to inr"<<endl<<"6. Current Balanace "<<endl<<"7. Know all Transactions"<<endl;
+        cout<<"8. Exit from the bitcoin world !"<<endl;
+        cout<<"Warning :: only 10 accounts can be created at once !!"<<endl;
+        cout<<endl;
         cin>>choice;
 
         switch(choice) {
@@ -149,37 +156,29 @@ int main() {
             case 1: cout<<"Enter account name"<<endl;
                     cin>>name;
                     a[i].getName(name);
-                    i++;
                     break;
-            case 2: if(i == 0) {
+            case 2: /*if(i == 0) {
                         cout<<"You must first create an account"<<endl;
                         break;
-                    }
+                    }*/
                     cout<<"Enter Amount to withdraw !"<<endl;
                     cin>>amount;
-                    a[i].withdraw(amount);
+                    last = a[i].withdraw(last, amount);
                     break;
-            case 3: if(i == 0) {
+            case 3: /*if(i == 0) {
                         cout<<"You must first create an account"<<endl;
                         break;
-                    }
+                    }*/
                     cout<<"Enter Amount to deposit !"<<endl;
                     cin>>amount;
-                    a[i].deposit(amount);
+                    last = a[i].deposit(last, amount);
                     break;
             case 7: traverse(last);
                     break;
             case 8: exit(0);
             default: return 0;
         }
-
         cout<<endl<<endl;
-        cout<<"What would you like to do in this blockchain world ?"<<endl;
-        cout<<"1. Create Account"<<endl<<"2. Withdraw Money"<<endl<<"3. Deposit Money"<<endl<<"4. Delete Account"<<endl;
-        cout<<"5. Convert from bitcoin to inr"<<endl<<"6. Current Balanace "<<endl<<"7. Know all Transactions"<<endl;
-        cout<<"8. Exit from the bitcoin world !"<<endl;
-        cout<<"Warning :: only 10 accounts can be created at once !!"<<endl;
-        cout<<endl;
     }
     return 0;
 }
