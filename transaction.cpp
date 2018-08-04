@@ -1,6 +1,7 @@
 // This program helps in creating an account, making transaction similar to the concept of bitcoin and blockchain
 #include<iostream>
 #include<bits/stdc++.h>
+#include<fstream>
 
 using namespace std;
 
@@ -94,6 +95,12 @@ bitcoin* person::withdraw(bitcoin* last, int amount) {
         if(choice == 'Y' || choice == 'y') {
             cout<<"Mr."<<name<<" your balance is $$ "<<balance<<endl;
         }
+        cout<<"Would you like to cancel your transaction ?"<<endl;
+        cin>>choice;
+        if(choice == 'Y' || choice == 'y') {
+            cout<<"Transaction cancelled !"<<endl;
+            return last;
+        }
         balance -= amount;
         cout<<"Would you like to see your current balance ?"<<endl;
         cout<<"Y/N ?"<<endl;
@@ -113,12 +120,12 @@ bitcoin* person::withdraw(bitcoin* last, int amount) {
 
 bitcoin* person::deposit(bitcoin* last, int amount) {
 
-    cout<<"Would you like to see your balance ?"<<endl;
+    cout<<"Would you like to see your previous balance ?"<<endl;
     cout<<"Y/N ?"<<endl;
     char choice;
     cin>>choice;
     if(choice == 'Y' || choice == 'y') {
-        cout<<"Mr."<<name<<" your balance is $$ "<<balance<<endl;
+        cout<<"Mr."<<name<<" your balance was $$ "<<balance<<endl;
     }
     balance += amount;
     cout<<"Would you like to see your current balance ?"<<endl;
@@ -143,7 +150,7 @@ int main() {
     person a[10];
     string name;
     while(1) {
-        cout<<"What would you like to do in this blockchain world ?"<<endl;
+        cout<<"What would you like to do in this blockchain world ?"<<endl<<endl;
         cout<<"1. Create Account"<<endl<<"2. Withdraw Money"<<endl<<"3. Deposit Money"<<endl<<"4. Delete Account"<<endl;
         cout<<"5. Convert from bitcoin to inr"<<endl<<"6. Current Balanace "<<endl<<"7. Know all Transactions"<<endl;
         cout<<"8. Exit from the bitcoin world !"<<endl;
